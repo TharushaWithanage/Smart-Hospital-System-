@@ -7,11 +7,13 @@
 #define MAX_PATIENTS 100
 #define MAX_BEDS 20
 
+void displaySpecialties(int specialtyID[], char specialtyName[][30], float consultationFee[], int consultationTime[]);
+
 int main()
 {
     int specialtyID[SPECIALITIES] = {1, 2, 3, 4};
 
-    char specialtyName[WARDS][30] =
+    char specialtyName[SPECIALITIES][30] =
     {
         "General Practice",
         "Paediatrics",
@@ -71,7 +73,45 @@ int main()
 
     int bedOccupancy[WARDS][MAX_BEDS] = {0};
 
+    int patientID[MAX_PATIENTS];
+    char patientNames[MAX_PATIENTS][50];
+    int patientAge[MAX_PATIENTS];
+    int agencyLevel[MAX_PATIENTS];
+    int patientSpecialty[MAX_PATIENTS];
+    int patientWard[MAX_PATIENTS];
+    int daysAdmitted[MAX_PATIENTS];
+    int patientBed[MAX_PATIENTS];
+
+    float waitingTime[MAX_PATIENTS];
+    float baseFee[MAX_PATIENTS];
+    float emergencySurcharge[MAX_PATIENTS];
+    float wardStayCost[MAX_PATIENTS];
+    float grossTotal[MAX_PATIENTS];
+    float ageDiscount[MAX_PATIENTS];
+    float finalPayable[MAX_PATIENTS];
+
+    int patientCount = 0;
+
+    displaySpecialties(specialtyID, specialtyName, consultationFee, consultationTime);
 
 
     return 0;
+}
+
+void displaySpecialties(int specialtyID[], char specialtyName[][30], float consultationFee[], int consultationTime[])
+{
+    int i;
+
+    printf("\n=====================================================\n");
+    printf("\t\tDOCTOR SPECIALTIES\n");
+    printf("\n=====================================================\n");
+    printf("%-5s %-25s %-12s %-10s\n", "ID", "Specialty", "Fee", "Time");
+    printf("\n-----------------------------------------------------\n");
+
+    for (int i=0; i<SPECIALITIES; i++){
+        printf("%-5d %-25s LKR %-8.2f %d mins\n", specialtyID[i], specialtyName[i], consultationFee[i], consultationTime[i]);
+
+    }
+
+    printf("\n=====================================================\n");
 }
