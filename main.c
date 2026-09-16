@@ -8,6 +8,7 @@
 #define MAX_BEDS 20
 
 void displaySpecialties(int specialtyID[], char specialtyName[][30], float consultationFee[], int consultationTime[]);
+void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
 
 int main()
 {
@@ -93,6 +94,8 @@ int main()
     int patientCount = 0;
 
     displaySpecialties(specialtyID, specialtyName, consultationFee, consultationTime);
+    displayWards(wardID, wardName, dailyBedRate, totalBedCapacity, bedOccupancy);
+
 
 
     return 0;
@@ -104,9 +107,9 @@ void displaySpecialties(int specialtyID[], char specialtyName[][30], float consu
 
     printf("\n=====================================================\n");
     printf("\t\tDOCTOR SPECIALTIES\n");
-    printf("\n=====================================================\n");
+    printf("=====================================================\n");
     printf("%-5s %-25s %-12s %-10s\n", "ID", "Specialty", "Fee", "Time");
-    printf("\n-----------------------------------------------------\n");
+    printf("-----------------------------------------------------\n");
 
     for (int i=0; i<SPECIALITIES; i++){
         printf("%-5d %-25s LKR %-8.2f %d mins\n", specialtyID[i], specialtyName[i], consultationFee[i], consultationTime[i]);
@@ -114,4 +117,22 @@ void displaySpecialties(int specialtyID[], char specialtyName[][30], float consu
     }
 
     printf("\n=====================================================\n");
+}
+
+void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int totalBedCapacity[], int bedOccupancy[][MAX_BEDS])
+{
+    int i;
+
+    printf("\n=====================================================\n");
+    printf("\t\tWARD INFORMATION\n");
+    printf("=====================================================\n");
+    printf("%-5s %-20s %-15s %-10s\n", "ID", "Ward", "Daily Rate", "Capacity");
+    printf("-----------------------------------------------------\n");
+
+    for(i=0; i<WARDS; i++)
+    {
+        printf("%-5d %-20s LKR %-10.2f %-10d\n", wardID[i], wardName[i], dailyBedRate[i], totalBedCapacity[i]);
+    }
+
+    printf("=====================================================\n");
 }
