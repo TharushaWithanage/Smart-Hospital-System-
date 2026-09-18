@@ -10,6 +10,7 @@
 void displaySpecialties(int specialtyID[], char specialtyName[][30], float consultationFee[], int consultationTime[]);
 void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
 void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
+void displayPatients(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 
 int main()
 {
@@ -104,7 +105,8 @@ int main()
         printf("1. Display Specialties\n");
         printf("2. Display Wards\n");
         printf("3. Add Patient\n");
-        printf("4. Exit\n");
+        printf("4. Display Patients\n");
+        printf("5. Exit\n");
         printf("-----------------------------------------------------\n");
 
         printf("Enter Your Choice: ");
@@ -125,6 +127,10 @@ int main()
             break;
 
         case 4:
+            displayPatients(patientID, patientNames, patientAge, agencyLevel, patientSpecialty, patientWard, daysAdmitted, patientBed, patientCount);
+            break;
+
+        case 5:
             printf("\nExiting Smart Hospital System...\n");
             break;
 
@@ -133,7 +139,7 @@ int main()
         }
 
 
-    } while(choice != 4);
+    } while(choice != 5);
 
     return 0;
 }
@@ -270,3 +276,28 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
     printf("\nPatient added successfully!\n");
     printf("=====================================================\n");
 }
+
+void displayPatients(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount)
+{
+    int i;
+
+    if(patientCount == 0)
+    {
+        printf("\nNo patients registered yet!\n");
+        return;
+    }
+
+    printf("\n=====================================================\n");
+    printf("\t\tPATIENT INFORMATION\n");
+    printf("=====================================================\n");
+    printf("%-6s %-20s %-6s %-8s %-10s %-8s %-8s %-6s\n", "ID", "Name", "Age", "Agency", "Specialty", "Ward", "Days", "Bed");
+    printf("-----------------------------------------------------\n");
+
+    for(i=0; i < patientCount; i++)
+    {
+        printf("%-6d %-20s %-6d %-8d %-10d %-8d %-8d %-6d\n", patientID[i], patientNames[i], patientAge[i], agencyLevel[i], patientSpecialty[i], patientWard[i], daysAdmitted[i], patientBed[i]);
+    }
+
+    printf("=====================================================\n");
+}
+
