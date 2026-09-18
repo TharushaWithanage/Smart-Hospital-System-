@@ -9,6 +9,7 @@
 
 void displaySpecialties(int specialtyID[], char specialtyName[][30], float consultationFee[], int consultationTime[]);
 void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
+void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
 
 int main()
 {
@@ -93,10 +94,46 @@ int main()
 
     int patientCount = 0;
 
-    displaySpecialties(specialtyID, specialtyName, consultationFee, consultationTime);
-    displayWards(wardID, wardName, dailyBedRate, totalBedCapacity, bedOccupancy);
+    int choice;
+
+    do
+    {
+        printf("\n=====================================================\n");
+        printf("\t\tSMART HOSPITAL SYSTEM\n");
+        printf("=====================================================\n");
+        printf("1. Display Specialties\n");
+        printf("2. Display Wards\n");
+        printf("3. Add Patient\n");
+        printf("4. Exit\n");
+        printf("-----------------------------------------------------\n");
+
+        printf("Enter Your Choice: ");
+        scanf("%d", &choice);
+
+        switch(choice)
+        {
+        case 1:
+            displaySpecialties(specialtyID, specialtyName, consultationFee, consultationTime);
+            break;
+
+        case 2:
+            displayWards(wardID, wardName, dailyBedRate, totalBedCapacity, bedOccupancy);
+            break;
+
+        case 3:
+            addPatient(patientID, patientNames, patientAge, agencyLevel, patientSpecialty, patientWard, daysAdmitted, patientBed, &patientCount, totalBedCapacity, bedOccupancy);
+            break;
+
+        case 4:
+            printf("\nExiting Smart Hospital System...\n");
+            break;
+
+        default:
+            printf("\nInvalid choice! Please try again.\n");
+        }
 
 
+    } while(choice != 4);
 
     return 0;
 }
@@ -134,5 +171,102 @@ void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int t
         printf("%-5d %-20s LKR %-10.2f %-10d\n", wardID[i], wardName[i], dailyBedRate[i], totalBedCapacity[i]);
     }
 
+    printf("=====================================================\n");
+}
+
+void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS])
+{
+    if(*patientCount >= MAX_PATIENTS)
+    {
+        printf("patient limit reached! Cannot add more patients\n");
+        return;
+    }
+
+    printf("\n=====================================================\n");
+    printf("\t\tADD PATIENT\n");
+    printf("=====================================================\n");
+
+    int i;
+
+    printf("Enter Patient ID: ");
+    scanf("%d", &patientID[*patientCount]);
+
+    for(i=0; i < *patientCount; i++)
+    {
+        if(patientID[i] == patientID[*patientCount])
+        {
+            printf("\nPatient ID already exists!\n");
+            return;
+        }
+    }
+
+    printf("Enter Patient Name: ");
+    scanf(" %[^\n]", patientNames[*patientCount]);
+
+    printf("Enter Patient Age: ");
+    scanf("%d", &patientAge[*patientCount]);
+
+    if(patientAge[*patientCount] <= 0)
+    {
+        printf("\nInvalid age!\n");
+        return;
+    }
+
+    printf("Enter Patient Agency Level: ");
+    scanf("%d", &agencyLevel[*patientCount]);
+
+    if(agencyLevel[*patientCount] < 1 || agencyLevel[*patientCount] > 3)
+    {
+        printf("\nInvalid Agency Level!\n");
+        return;
+    }
+
+    printf("Enter Patient Specialty ID: ");
+    scanf("%d", &patientSpecialty[*patientCount]);
+
+    if(patientSpecialty[*patientCount] < 1 || patientSpecialty[*patientCount] > SPECIALITIES)
+    {
+        printf("\nInvalid Specialty ID!\n");
+        return;
+    }
+
+    printf("Enter Patient Ward ID: ");
+    scanf("%d", &patientWard[*patientCount]);
+
+    if(patientWard[*patientCount] < 1 || patientWard[*patientCount] > WARDS)
+    {
+        printf("\nInvalid Ward ID!\n");
+        return;
+    }
+
+    printf("Enter Days Admitted: ");
+    scanf("%d", &daysAdmitted[*patientCount]);
+
+    if(daysAdmitted[*patientCount] <= 0)
+    {
+        printf("\nInvalid number of days!\n");
+        return;
+    }
+
+    printf("Enter Bed Number: ");
+    scanf("%d", &patientBed[*patientCount]);
+
+    if(patientBed[*patientCount] < 1 || patientBed[*patientCount] > totalBedCapacity[patientWard[*patientCount] - 1])
+    {
+        printf("\nInvalid Bed Number for this ward!\n");
+        return;
+    }
+
+    if(bedOccupancy[patientWard[*patientCount] - 1][patientBed[*patientCount] - 1] == 1)
+    {
+        printf("\nBed is already occupied! Please choose another bed\n");
+        return;
+    }
+
+    bedOccupancy[patientWard[*patientCount] - 1][patientBed[*patientCount] - 1] = 1;
+
+    (*patientCount)++;
+
+    printf("\nPatient added successfully!\n");
     printf("=====================================================\n");
 }
