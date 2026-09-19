@@ -9,12 +9,14 @@
 
 void displaySpecialties(int specialtyID[], char specialtyName[][30], float consultationFee[], int consultationTime[]);
 void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
-void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS], int queueCount[], int consultationTime[], float baseFee[], float emergencySurcharge[], float consultationFee[]);
+void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS], int queueCount[], int consultationTime[], float baseFee[], float emergencySurcharge[], float consultationFee[], float dailyBedRate[], float wardStayCost[], float grossTotal[]);
 void displayPatients(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 void searchPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 void sortPatientsByPriority(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 float calculateWaitingTime(int specialty, int queueCount[], int consultationTime[]);
 float calculateEmergencySurcharge(int urgencyLevel, float baseFee);
+float calculateWardStayCost(int ward, int days, float dailyBedRate[]);
+float calculateGrossTotal(float baseFee, float emergencySurcharge, float wardStayCost);
 
 int main()
 {
@@ -131,7 +133,7 @@ int main()
             break;
 
         case 3:
-            addPatient(patientID, patientNames, patientAge, agencyLevel, patientSpecialty, patientWard, daysAdmitted, patientBed, &patientCount, totalBedCapacity, bedOccupancy, queueCount, consultationTime, baseFee, emergencySurcharge, consultationFee);
+            addPatient(patientID, patientNames, patientAge, agencyLevel, patientSpecialty, patientWard, daysAdmitted, patientBed, &patientCount, totalBedCapacity, bedOccupancy, queueCount, consultationTime, baseFee, emergencySurcharge, consultationFee, dailyBedRate, wardStayCost, grossTotal);
             break;
 
         case 4:
@@ -196,7 +198,7 @@ void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int t
     printf("=====================================================\n");
 }
 
-void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS], int queueCount[], int consultationTime[], float baseFee[], float emergencySurcharge[], float consultationFee[])
+void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS], int queueCount[], int consultationTime[], float baseFee[], float emergencySurcharge[], float consultationFee[], float dailyBedRate[], float wardStayCost[], float grossTotal[])
 {
     if(*patientCount >= MAX_PATIENTS)
     {
@@ -210,7 +212,7 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
 
     int i;
 
-    printf("Enter Patient ID: ");
+    printf("Enter Patient ID           : ");
     scanf("%d", &patientID[*patientCount]);
 
     for(i=0; i < *patientCount; i++)
@@ -222,10 +224,10 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
         }
     }
 
-    printf("Enter Patient Name: ");
+    printf("Enter Patient Name         : ");
     scanf(" %[^\n]", patientNames[*patientCount]);
 
-    printf("Enter Patient Age: ");
+    printf("Enter Patient Age          : ");
     scanf("%d", &patientAge[*patientCount]);
 
     if(patientAge[*patientCount] <= 0)
@@ -234,7 +236,7 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
         return;
     }
 
-    printf("Enter Patient Agency Level: ");
+    printf("Enter Patient Agency Level : ");
     scanf("%d", &agencyLevel[*patientCount]);
 
     if(agencyLevel[*patientCount] < 1 || agencyLevel[*patientCount] > 3)
@@ -243,7 +245,7 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
         return;
     }
 
-    printf("Enter Patient Specialty ID: ");
+    printf("Enter Patient Specialty ID : ");
     scanf("%d", &patientSpecialty[*patientCount]);
 
     if(patientSpecialty[*patientCount] < 1 || patientSpecialty[*patientCount] > SPECIALITIES)
@@ -252,7 +254,7 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
         return;
     }
 
-    printf("Enter Patient Ward ID: ");
+    printf("Enter Patient Ward ID      : ");
     scanf("%d", &patientWard[*patientCount]);
 
     if(patientWard[*patientCount] < 1 || patientWard[*patientCount] > WARDS)
@@ -261,7 +263,7 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
         return;
     }
 
-    printf("Enter Days Admitted: ");
+    printf("Enter Days Admitted        : ");
     scanf("%d", &daysAdmitted[*patientCount]);
 
     if(daysAdmitted[*patientCount] <= 0)
@@ -270,7 +272,7 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
         return;
     }
 
-    printf("Enter Bed Number: ");
+    printf("Enter Bed Number           : ");
     scanf("%d", &patientBed[*patientCount]);
 
     if(patientBed[*patientCount] < 1 || patientBed[*patientCount] > totalBedCapacity[patientWard[*patientCount] - 1])
@@ -291,15 +293,21 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
 
     waitingTime = calculateWaitingTime(patientSpecialty[*patientCount], queueCount, consultationTime);
 
-    printf("\nWaiting Time: %.0f minutes\n", waitingTime);
+    printf("\nWaiting Time        : %.0f minutes\n", waitingTime);
 
     queueCount[patientSpecialty[*patientCount] - 1]++;
 
     baseFee[*patientCount] = consultationFee[patientSpecialty[*patientCount] - 1];
     emergencySurcharge[*patientCount] = calculateEmergencySurcharge(agencyLevel[*patientCount], baseFee[*patientCount]);
 
-    printf("Base Fee: LKR %.2f\n", baseFee[*patientCount]);
-    printf("Emergency Surcharge: LKR %.2f\n", emergencySurcharge[*patientCount]);
+    printf("Base Fee            : LKR %.2f\n", baseFee[*patientCount]);
+    printf("Emergency Surcharge : LKR %.2f\n", emergencySurcharge[*patientCount]);
+
+    wardStayCost[*patientCount] = calculateWardStayCost(patientWard[*patientCount], daysAdmitted[*patientCount], dailyBedRate);
+    printf("Ward Stay Cost      : LKR %.2f\n", wardStayCost[*patientCount]);
+
+    grossTotal[*patientCount] = calculateGrossTotal(baseFee[*patientCount], emergencySurcharge[*patientCount], wardStayCost[*patientCount]);
+    printf("Gross Total         : LKR %.2f\n", grossTotal[*patientCount]);
 
     (*patientCount)++;
 
@@ -478,6 +486,16 @@ float calculateEmergencySurcharge(int urgencyLevel, float baseFee)
         return baseFee * 0.50;
 
     }
+}
+
+float calculateWardStayCost(int ward, int days, float dailyBedRate[])
+{
+    return days * dailyBedRate[ward-1];
+}
+
+float calculateGrossTotal(float baseFee, float emergencySurcharge, float wardStayCost)
+{
+    return baseFee + emergencySurcharge + wardStayCost;
 }
 
 
