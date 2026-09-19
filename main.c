@@ -9,11 +9,12 @@
 
 void displaySpecialties(int specialtyID[], char specialtyName[][30], float consultationFee[], int consultationTime[]);
 void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
-void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS], int queueCount[], int consultationTime[]);
+void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS], int queueCount[], int consultationTime[], float baseFee[], float emergencySurcharge[], float consultationFee[]);
 void displayPatients(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 void searchPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 void sortPatientsByPriority(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 float calculateWaitingTime(int specialty, int queueCount[], int consultationTime[]);
+float calculateEmergencySurcharge(int urgencyLevel, float baseFee);
 
 int main()
 {
@@ -130,7 +131,7 @@ int main()
             break;
 
         case 3:
-            addPatient(patientID, patientNames, patientAge, agencyLevel, patientSpecialty, patientWard, daysAdmitted, patientBed, &patientCount, totalBedCapacity, bedOccupancy, queueCount, consultationTime);
+            addPatient(patientID, patientNames, patientAge, agencyLevel, patientSpecialty, patientWard, daysAdmitted, patientBed, &patientCount, totalBedCapacity, bedOccupancy, queueCount, consultationTime, baseFee, emergencySurcharge, consultationFee);
             break;
 
         case 4:
@@ -195,7 +196,7 @@ void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int t
     printf("=====================================================\n");
 }
 
-void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS], int queueCount[], int consultationTime[])
+void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS], int queueCount[], int consultationTime[], float baseFee[], float emergencySurcharge[], float consultationFee[])
 {
     if(*patientCount >= MAX_PATIENTS)
     {
@@ -293,6 +294,12 @@ void addPatient(int patientID[], char patientNames[][50], int patientAge[], int 
     printf("\nWaiting Time: %.0f minutes\n", waitingTime);
 
     queueCount[patientSpecialty[*patientCount] - 1]++;
+
+    baseFee[*patientCount] = consultationFee[patientSpecialty[*patientCount] - 1];
+    emergencySurcharge[*patientCount] = calculateEmergencySurcharge(agencyLevel[*patientCount], baseFee[*patientCount]);
+
+    printf("Base Fee: LKR %.2f\n", baseFee[*patientCount]);
+    printf("Emergency Surcharge: LKR %.2f\n", emergencySurcharge[*patientCount]);
 
     (*patientCount)++;
 
@@ -456,6 +463,21 @@ void sortPatientsByPriority(int patientID[], char patientNames[][50], int patien
 float calculateWaitingTime(int specialty, int queueCount[], int consultationTime[])
 {
     return queueCount[specialty - 1] * consultationTime[specialty - 1];
+}
+
+float calculateEmergencySurcharge(int urgencyLevel, float baseFee)
+{
+    if(urgencyLevel == 1)
+    {
+        return 0;
+
+    } else if(urgencyLevel == 2) {
+        return baseFee * 0.20;
+
+    } else {
+        return baseFee * 0.50;
+
+    }
 }
 
 
