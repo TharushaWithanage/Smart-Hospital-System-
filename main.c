@@ -11,6 +11,7 @@ void displaySpecialties(int specialtyID[], char specialtyName[][30], float consu
 void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
 void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
 void displayPatients(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
+void searchPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 
 int main()
 {
@@ -106,7 +107,8 @@ int main()
         printf("2. Display Wards\n");
         printf("3. Add Patient\n");
         printf("4. Display Patients\n");
-        printf("5. Exit\n");
+        printf("5. Search Patient\n");
+        printf("6. Exit\n");
         printf("-----------------------------------------------------\n");
 
         printf("Enter Your Choice: ");
@@ -131,6 +133,10 @@ int main()
             break;
 
         case 5:
+            searchPatient(patientID, patientNames, patientAge, agencyLevel, patientSpecialty, patientWard, daysAdmitted, patientBed, patientCount);
+            break;
+
+        case 6:
             printf("\nExiting Smart Hospital System...\n");
             break;
 
@@ -139,7 +145,7 @@ int main()
         }
 
 
-    } while(choice != 5);
+    } while(choice != 6);
 
     return 0;
 }
@@ -287,17 +293,67 @@ void displayPatients(int patientID[], char patientNames[][50], int patientAge[],
         return;
     }
 
-    printf("\n=====================================================\n");
-    printf("\t\tPATIENT INFORMATION\n");
-    printf("=====================================================\n");
+    printf("\n==============================================================================\n");
+    printf("\t\t\tPATIENT INFORMATION\n");
+    printf("==============================================================================\n");
     printf("%-6s %-20s %-6s %-8s %-10s %-8s %-8s %-6s\n", "ID", "Name", "Age", "Agency", "Specialty", "Ward", "Days", "Bed");
-    printf("-----------------------------------------------------\n");
+    printf("------------------------------------------------------------------------------\n");
 
     for(i=0; i < patientCount; i++)
     {
         printf("%-6d %-20s %-6d %-8d %-10d %-8d %-8d %-6d\n", patientID[i], patientNames[i], patientAge[i], agencyLevel[i], patientSpecialty[i], patientWard[i], daysAdmitted[i], patientBed[i]);
     }
 
+    printf("==============================================================================\n");
+}
+
+void searchPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount)
+{
+    int searchID;
+    int i;
+    int found = 0;
+
+    if(patientCount == 0)
+    {
+        printf("\nNo patients registered yet!\n");
+        return;
+    }
+
+    printf("\n=====================================================\n");
+    printf("\t\tSEARCH PATIENT\n");
     printf("=====================================================\n");
+
+    printf("Enter Patient ID to search: ");
+    scanf("%d", &searchID);
+
+    for(i=0; i < patientCount; i++)
+    {
+        if(patientID[i] == searchID)
+        {
+            printf("\nPatient Found!\n");
+            printf("-----------------------------------------------------\n");
+            printf("Patient ID    : %d\n", patientID[i]);
+            printf("Patient Name  : %s\n", patientNames[i]);
+            printf("Patient Age   : %d\n", patientAge[i]);
+            printf("Agency Level  : %d\n", agencyLevel[i]);
+            printf("Specialty ID  : %d\n", patientSpecialty[i]);
+            printf("Ward ID       : %d\n", patientWard[i]);
+            printf("Days Admitted : %d\n", daysAdmitted[i]);
+            printf("Bed Number    : %d\n", patientBed[i]);
+            printf("-----------------------------------------------------\n");
+
+            found = 1;
+            break;
+
+        }
+    }
+
+    if(found == 0)
+    {
+        printf("\nPatient with ID %d not found!\n", searchID);
+    }
+
+    printf("=====================================================\n");
+
 }
 
