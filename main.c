@@ -12,6 +12,7 @@ void displayWards(int wardID[], char wardName[][30], float dailyBedRate[], int t
 void addPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int *patientCount, int totalBedCapacity[], int bedOccupancy[][MAX_BEDS]);
 void displayPatients(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 void searchPatient(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
+void sortPatientsByPriority(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount);
 
 int main()
 {
@@ -108,7 +109,8 @@ int main()
         printf("3. Add Patient\n");
         printf("4. Display Patients\n");
         printf("5. Search Patient\n");
-        printf("6. Exit\n");
+        printf("6. Display Patients by Priority\n");
+        printf("7. Exit\n");
         printf("-----------------------------------------------------\n");
 
         printf("Enter Your Choice: ");
@@ -137,6 +139,10 @@ int main()
             break;
 
         case 6:
+            sortPatientsByPriority(patientID, patientNames, patientAge, agencyLevel, patientSpecialty, patientWard, daysAdmitted, patientBed, patientCount);
+            break;
+
+        case 7:
             printf("\nExiting Smart Hospital System...\n");
             break;
 
@@ -145,7 +151,7 @@ int main()
         }
 
 
-    } while(choice != 6);
+    } while(choice != 7);
 
     return 0;
 }
@@ -355,5 +361,84 @@ void searchPatient(int patientID[], char patientNames[][50], int patientAge[], i
 
     printf("=====================================================\n");
 
+}
+
+void sortPatientsByPriority(int patientID[], char patientNames[][50], int patientAge[], int agencyLevel[], int patientSpecialty[], int patientWard[], int daysAdmitted[], int patientBed[], int patientCount)
+{
+    int i, j;
+
+    int tempID;
+    int tempAge;
+    int tempAgency;
+    int tempSpecialty;
+    int tempWard;
+    int tempDays;
+    int tempBed;
+
+    char tempName[50];
+
+    if(patientCount == 0)
+    {
+        printf("\nNo patients registered yet!\n");
+        return;
+    }
+
+    /* Bubble sort:
+    Higher urgency level gets higher priority.
+    Registration order is maintained when urgency levels are equal, */
+
+    for(i=0; i < patientCount - 1; i++)
+    {
+        for(j=0; j < patientCount - i - j; j++)
+        {
+            if(agencyLevel[j] < agencyLevel[j+1])
+            {
+                tempID = patientID[j];
+                patientID[j] = patientID[j+1];
+                patientID[j+1] = tempID;
+
+                strcpy(tempName, patientNames[j]);
+                strcpy(patientNames[j], patientNames[j+1]);
+                strcpy(patientNames[j+1], tempName);
+
+                tempAge = patientAge[j];
+                patientAge[j] = patientAge[j+1];
+                patientAge[j+1] = tempAge;
+
+                tempAgency = agencyLevel[j];
+                agencyLevel[j] = agencyLevel[j+1];
+                agencyLevel[j+1] = tempAgency;
+
+                tempSpecialty = patientSpecialty[j];
+                patientSpecialty[j] = patientSpecialty[j+1];
+                patientSpecialty[j+1] = tempSpecialty;
+
+                tempWard = patientWard[j];
+                patientWard[j] = patientWard[j+1];
+                patientWard[j+1] = tempWard;
+
+                tempDays = daysAdmitted[j];
+                daysAdmitted[j] = daysAdmitted[j+1];
+                daysAdmitted[j+1] = tempDays;
+
+                tempBed = patientBed[j];
+                patientBed[j] = patientBed[j+1];
+                patientBed[j+1] = tempBed;
+            }
+        }
+    }
+
+    printf("\n=====================================================\n");
+    printf("\t\tPATIENTS BY PRIORITY\n");
+    printf("=====================================================\n");
+    printf("%-6s %-20s %-6s %-10s %-10s\n", "ID", "Name", "Age", "Urgency", "Bed");
+    printf("-----------------------------------------------------\n");
+
+    for(i=0; i < patientCount; i++)
+    {
+        printf("%-6d %-20s %-6d %-10d %-10d\n", patientID[i], patientNames[i], patientAge[i], agencyLevel[i], patientBed[i]);
+    }
+
+    printf("=====================================================\n");
 }
 
